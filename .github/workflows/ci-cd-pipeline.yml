@@ -22,10 +22,15 @@ jobs:
         cd frontend
         npm install
 
+    - name: Check for eslint
+      run: |
+        cd frontend
+        npx eslint --version  # Проверим, что eslint доступен
+
     - name: Run ESLint
       run: |
         cd frontend
-        npx eslint .
+        npx eslint .  # Запускаем линтер
 
   build-and-push-backend:
     runs-on: ubuntu-latest
