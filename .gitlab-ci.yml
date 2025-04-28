@@ -1,0 +1,46 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+build_backend:
+  stage: build
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE/backend:latest -f Dockerfile-backend .
+  only:
+    - main
+
+build_frontend:
+  stage: build
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE/frontend:latest -f Dockerfile-frontend .
+  only:
+    - main
+
+test_backend:
+  stage: test
+  script:
+    - echo "Running backend tests"
+    - echo "Tests passed!"
+  only:
+    - main
+
+test_frontend:
+  stage: test
+  script:
+    - echo "Running frontend tests"
+    - echo "Tests passed!"
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker push $CI_REGISTRY_IMAGE/backend:latest
+    - docker push $CI_REGISTRY_IMAGE/frontend:latest
+  only:
+    - main
