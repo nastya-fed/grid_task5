@@ -22,14 +22,10 @@ jobs:
         cd frontend
         npm install
 
-    - name: Give execute permissions for ESLint
-      run: |
-        chmod +x ./node_modules/.bin/eslint
-
     - name: Run ESLint
       run: |
         cd frontend
-        npm run lint
+        npx eslint .
 
   build-and-push-backend:
     runs-on: ubuntu-latest
