@@ -22,10 +22,15 @@ jobs:
         cd frontend
         npm install
 
-    - name: Check for eslint
+    - name: Check if ESLint is installed
       run: |
         cd frontend
-        npx eslint --version  # Проверим, что eslint доступен
+        npx eslint --version  # Проверим, что ESLint доступен
+
+    - name: Fix permissions for ESLint
+      run: |
+        cd frontend
+        chmod +x ./node_modules/.bin/eslint  # Даем разрешения на исполнение eslint
 
     - name: Run ESLint
       run: |
