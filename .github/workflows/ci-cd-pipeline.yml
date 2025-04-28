@@ -5,26 +5,25 @@ on:
     branches: [ main ]
 
 jobs:
-  lint-and-test-frontend:
+  lint:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Установить зависимости для фронтенда
-      - name: Install dependencies (Frontend)
-        run: npm install
-        working-directory: ./frontend
+      - name: Install dependencies for frontend
+        run: |
+          cd frontend
+          npm install
 
-      # Запустить линтинг фронтенда
-      - name: Run ESLint (Frontend)
-        run: npx --no-install eslint .
-        working-directory: ./frontend
+      - name: Run ESLint
+        run: |
+          cd frontend
+          npx eslint .
 
   build-and-push-backend:
     runs-on: ubuntu-latest
-    needs: lint-and-test-frontend
+    needs: lint
 
     steps:
       - name: Checkout repository
