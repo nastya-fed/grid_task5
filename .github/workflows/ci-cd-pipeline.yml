@@ -2,61 +2,64 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Install dependencies for frontend
-        run: |
-          cd frontend
-          npm install
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
 
-      - name: Run ESLint
-        run: |
-          cd frontend
-          npx eslint .
+    - name: Install dependencies
+      run: |
+        cd frontend
+        npm install
+
+    - name: Run ESLint
+      run: |
+        cd frontend
+        npm run lint
 
   build-and-push-backend:
     runs-on: ubuntu-latest
-    needs: lint
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Backend Docker image
-        run: |
-          cd backend
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/backend-image:latest .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/backend-image:latest
+    - name: Build and push Backend Docker image
+      run: |
+        cd backend
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/backend-image:latest .
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/backend-image:latest
 
   build-and-push-frontend:
-    runs-on: ubuntu-latest
     needs: build-and-push-backend
-
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Frontend Docker image
-        run: |
-          cd frontend
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/frontend-image:latest .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/frontend-image:latest
+    - name: Build and push Frontend Docker image
+      run: |
+        cd frontend
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/frontend-image:latest .
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/frontend-image:latest
