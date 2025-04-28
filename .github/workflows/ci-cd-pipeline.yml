@@ -19,7 +19,7 @@ jobs:
 
       # Запустить линтинг фронтенда
       - name: Run ESLint (Frontend)
-        run: npx eslint .
+        run: npx --no-install eslint .
         working-directory: ./frontend
 
   build-and-push-backend:
